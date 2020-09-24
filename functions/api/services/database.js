@@ -1,10 +1,10 @@
 const admin = require('firebase-admin');
 
-const serviceAccount = require('../../animal-colony-76d9b-firebase-adminsdk-egbh6-ac4894dd6b.json');
+const serviceAccount = require('../../animal-colony-project-firebase-adminsdk-5815z-411e5fc735.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://animal-colony-61928.firebaseio.com',
+  databaseURL: 'https://animal-colony-project.firebaseio.com',
 });
 
 const db = admin.firestore();
@@ -16,9 +16,19 @@ const db = admin.firestore();
  * @returns {Promise<Object>}
  */
 const createUser = async (registrationInformation) => {
-  const { email } = registrationInformation;
-  await db.collection('users').doc(email).set(registrationInformation);
+  const { uid } = registrationInformation;
+  await db.collection('users').doc(uid).set(registrationInformation);
   return registrationInformation;
+};
+
+/**
+ * Retrieves user details from the mock database based on a given uid
+ * @param uid
+ * @returns {Promise<Object>}
+ */
+const getUserByUid = async (uid) => {
+  const user = await db.collection('users').doc(uid).get();
+  return user.data();
 };
 
 /**
@@ -26,11 +36,11 @@ const createUser = async (registrationInformation) => {
  * @param username
  * @returns {Promise<Object>}
  */
-const getUser = async (email) => {
-  const user = await db.collection('users').doc(email).get();
-  return user.data();
-};
-
+const getUserByEmail = async (email) => {
+  const qs = await db.collection('users').where('email', "==", email).limit(1).get();
+  const user = qs.docs;
+  return user[0].data();
+}
 
 /**
  * Adds a colony uuid to a users ownedColonies
@@ -38,8 +48,8 @@ const getUser = async (email) => {
  * @param username - user's username
  * @param colonyId - uuid of colony to add to profile
  */
-const addColonyToUser = async (email, colonyId) => {
-  const user = db.collection('users').doc(email);
+const addColonyToUser = async (uid, colonyId) => {
+  const user = db.collection('users').doc(uid);
   user.update({
     ownedColonies: admin.firestore.FieldValue.arrayUnion(colonyId),
   });
@@ -51,8 +61,8 @@ const addColonyToUser = async (email, colonyId) => {
  * @param username - user's username
  * @param colonyId - uuid of colony to add to profile
  */
-const addSharedColonyToUser = async (email, colonyId, accessRights) => {
-  const user = db.collection('users').doc(email);
+const addSharedColonyToUser = async (uid, colonyId, accessRights) => {
+  const user = db.collection('users').doc(uid);
   const entry = { colonyId, accessRights };
   const inversePermission = !accessRights;
   user.update({
@@ -78,7 +88,7 @@ const deleteAnimals = async (query) => {
       if (snapshot.size === 0) {
         return 0;
       }
-      
+
       var batch = db.batch();
       snapshot.docs.forEach((doc) => {
         batch.delete(doc.ref);
@@ -135,9 +145,9 @@ const editAnimal = async (colonyId, animal) => {
  *
  * @return colony.id - uuid of new colony
  */
-const addColony = async (email, colonyInfo) => {
+const addColony = async (uid, colonyInfo) => {
   const colony = db.collection('colonies').doc();
-  addColonyToUser(email, colony.id);
+  addColonyToUser(uid, colony.id);
   colonyInfo.colonyId = colony.id;
   await colony.set(colonyInfo);
   return colony.id;
@@ -219,5 +229,5 @@ const getAnimals = async (colonyId, pageSize, pageNum) => {
 };
 
 module.exports = {
-  createUser, getUser, addColony, addAnimal, addColonyToUser, getColonies, getAnimals, addSharedColonyToUser, deleteColony, deleteAnimal, editAnimal, getSharedColonies, storeImageLink, storeNote
+  createUser, getUserByUid, getUserByEmail, addColony, addAnimal, addColonyToUser, getColonies, getAnimals, addSharedColonyToUser, deleteColony, deleteAnimal, editAnimal, getSharedColonies, storeImageLink, storeNote
 };

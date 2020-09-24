@@ -10,11 +10,11 @@ const animalController = require('../controllers/animals');
  * @param next
  */
 const createColony = async (req, res, next) => {
-  const { user: { email }, body: { payload, name } } = req;
+  const { user: { uid }, body: { payload, name } } = req;
 
   /* Create initial colony meta data and add to db */
   const colonyMeta = { colonyName: name, size: 0 };
-  const colonyId = await dataService.addColony(email, colonyMeta);
+  const colonyId = await dataService.addColony(uid, colonyMeta);
 
   /* Parse the csv payload */
   const lines = payload.split('\n');
@@ -55,7 +55,9 @@ const deleteColony = async (req, res) => {
 const shareColony = async (req, res) => {
   const { body: { email, colonyId, accessRights } } = req;
 
-  await dataService.addSharedColonyToUser(email, colonyId, accessRights)
+  const userData = await dataService.getUserByEmail(email);
+
+  await dataService.addSharedColonyToUser(userData.uid, colonyId, accessRights)
     .then((uuid) => {
       res.status(200).json(uuid);
     })
