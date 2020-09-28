@@ -1,5 +1,6 @@
 const jwt = require('../services/jwt');
 const dataService = require('../services/database');
+const cookieParser = require('cookie-parser');
 
 /**
  * Authentication middleware to verify the validity of a session JWT and retrieve
@@ -12,8 +13,13 @@ const dataService = require('../services/database');
  * @returns {Promise<*>}
  */
 const authentication = async (req, res, next) => {
+  //console.log(req.cookies);
+  //console.log(req.headers);
+  var sessionId = cookieParser.JSONCookies(req.cookies);
+  console.log(sessionId);
   const { cookies: { session } } = req;
   try {
+    console.log(session);
     const { email } = jwt.verifyToken(session);
 
     req.user = await dataService.getUser(email);

@@ -23,14 +23,12 @@ const currentUser = (req, res) => {
 const createUser = async (req, res, next) => {
   console.log(req.body);
   const {
-    body: {
-      firstName, lastName, email, password,
-    },
-  } = req;
+    firstName, lastName, email, password
+  } = req.body;
   if (!firstName || !lastName) {
     next(Error(`Missing ${!firstName ? 'first' : 'last'} name`));
   }
-
+  console.log(password);
   const passwordHash = bcrypt.hashSync(password, 5);
   const ownedColonies = [];
   const sharedColonies = [];
@@ -49,7 +47,12 @@ const createUser = async (req, res, next) => {
     const { email } = userDetails;
     delete userDetails.passwordHash;
     const authToken = jwt.createToken({ email });
+    const origin = req.headers.origin;
+    console.log(origin);
     res
+      .setHeader('Access-Control-Allow-Origin', origin)
+      .setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+      .setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,HEAD,PUT,OPTIONS')
       .cookie('session', authToken, { sameSite: 'none', secure: true })
       .status(200)
       .json(userDetails);

@@ -8,7 +8,7 @@ const login = async (req, res) => {
   /* Verify that a user exists in the database with the given username
    * and password combination
    */
-  const user = await dataService.getUser(email);
+  const user = await dataService.getUser(email).catch((err) => { next(Error(`Unable to register user at this time: ${err.toString()}`));   }); 
 
   try {
     /* Only return the details we need, otherwise we start leaking data like
@@ -30,7 +30,7 @@ const login = async (req, res) => {
     userDetails.ownedColonies = ownedColoniesMeta;
     userDetails.sharedColonies = sharedColoniesMeta;
 
-    res.cookie('session', authToken, { sameSite: 'none', secure: true }).status(200).json(userDetails);
+    res.cookie('session', authToken).status(200).json(userDetails);
   } catch (err) {
     res.sendStatus(401);
   }
