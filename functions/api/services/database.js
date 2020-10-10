@@ -168,7 +168,8 @@ const addAnimal = async (colonyId, animalInfo) => {
   const animal = colony.collection('animals').doc();
   animalInfo.animalUUID = animal.id;
   await animal.set(animalInfo);
-  return animal.id;
+  // return animal.id;
+  return animalInfo;
 };
 
 const storeImageLink = async (colonyId, animalId, url) => {
