@@ -27,7 +27,18 @@ const deleteAnimal = async (req, res) => {
 
 const editAnimal = async (req, res) => {
   const { body: { animal, colonyId } } = req;
+  console.log(req.body);
   await dataService.editAnimal(colonyId, animal)
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch(() => res.sendStatus(404));
+}
+
+const addAnimal = async (req, res) => {
+  const { body: { animal, colonyId } } = req;
+  console.log(req.body);
+  await dataService.addAnimal(colonyId, animal)
     .then((result) => {
       res.status(200).json(result);
     })
@@ -74,4 +85,4 @@ const storeNote = async (req, res) => {
     .catch(() => res.sendStatus(500));
 }
 
-module.exports = { getAnimals, deleteAnimal, editAnimal, storeImageLink, createAnimal, storeNote };
+module.exports = { getAnimals, deleteAnimal, editAnimal, addAnimal, storeImageLink, createAnimal, storeNote };
