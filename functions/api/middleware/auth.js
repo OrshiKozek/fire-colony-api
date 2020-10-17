@@ -16,10 +16,8 @@ const authentication = async (req, res, next) => {
   //console.log(req.cookies);
   //console.log(req.headers);
   var sessionId = cookieParser.JSONCookies(req.cookies);
-  console.log(sessionId);
   const { cookies: { session } } = req;
   try {
-    console.log(session);
     const { email } = jwt.verifyToken(session);
 
     req.user = await dataService.getUser(email);

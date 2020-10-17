@@ -10,7 +10,6 @@ const animalController = require('../controllers/animals');
  * @param next
  */
 const createColony = async (req, res, next) => {
-  console.log(req.body);
   const { user: { email }, body: { payload, name } } = req;
 
   /* Create initial colony meta data and add to db */
