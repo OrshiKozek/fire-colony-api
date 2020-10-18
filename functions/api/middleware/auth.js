@@ -1,5 +1,6 @@
 const jwt = require('../services/jwt');
 const dataService = require('../services/database');
+const cookieParser = require('cookie-parser');
 
 /**
  * Authentication middleware to verify the validity of a session JWT and retrieve

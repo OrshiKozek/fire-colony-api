@@ -1,6 +1,7 @@
 const admin = require('firebase-admin');
+const { pick } = require('lodash');
 
-const serviceAccount = require('../../animal-colony-project-firebase-adminsdk-5815z-411e5fc735.json');
+const serviceAccount = require('../../animal-colony-project-firebase-adminsdk-5815z-bdfc4220e8.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -190,6 +191,24 @@ const storeNote = async (colonyId, animalId, note) => {
   return { animalId, note };
 };
 
+const storeEvent = async (colonyId, animalId, eventInfo) => {
+  const colony = db.collection('colonies').doc(colonyId);
+  const animal = colony.collection('animals').doc(animalId);
+  animal.update({
+    events: admin.firestore.FieldValue.arrayUnion(eventInfo),
+  });
+
+  const eventRef = db.collection('events').doc();
+  var users = await getUsers(colonyId);
+  eventRef.set({
+      event: eventInfo.event,
+      timestamp: eventInfo.timestamp,
+      users: users,
+  });
+
+  return { animalId, eventInfo };
+};
+
 const getColonies = async (list) => {
   const coloniesRef = db.collection('colonies');
   const colonies = [];
@@ -203,6 +222,26 @@ const getColonies = async (list) => {
 
   return colonies;
 };
+
+const getUsers = async (colonyId) => {
+  const usersRef = db.collection('users');
+  const querySnapshot = await usersRef.get();
+  var users = [];
+  if (!querySnapshot.empty) {
+    querySnapshot.forEach(doc => {
+      const data = doc.data();
+      const numberOfKeys = Object.keys(data).length;
+      if(numberOfKeys > 0){
+        if(data.ownedColonies.indexOf(colonyId) != -1 || data.sharedColonies.indexOf(colonyId) != -1) {
+          const currUser = data.email;
+          users.push(currUser);
+        }
+      }
+    })
+  }
+  console.log("Users: " + users);
+  return users; 
+}
 
 const getSharedColonies = async (list) => {
   const coloniesRef = db.collection('colonies');
@@ -297,5 +336,5 @@ const searchAnimals = async (colonyId, searchCriteria) => {
 };
 
 module.exports = {
-  createUser, getUserByUid, getUserByEmail, addColony, addAnimal, addColonyToUser, getColonies, getAnimals, addSharedColonyToUser, deleteColony, deleteAnimal, editAnimal, getSharedColonies, storeImageLink, storeNote, searchAnimals
+  createUser, getUserByUid, getUserByEmail, addColony, addAnimal, addColonyToUser, getColonies, getAnimals, addSharedColonyToUser, deleteColony, deleteAnimal, editAnimal, getSharedColonies, storeImageLink, storeNote, storeEvent, getUsers, searchAnimals
 };
