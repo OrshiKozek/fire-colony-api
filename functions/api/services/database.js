@@ -56,7 +56,7 @@ const createNewTag = async (name) => {
   .then(function(doc1) {
     if (doc1.exists) {
       console.log(`${doc1.id} already exists`);
-      
+
     } else {
       // doc.data() will be undefined in this case
       console.log("No such document!");
@@ -229,8 +229,13 @@ const addAnimal = async (colonyId, animalInfo) => {
   });
   const animal = colony.collection('animals').doc();
   animalInfo.animalUUID = animal.id;
+  animalInfo.imageLinks = [];
+  animalInfo.notes = [];
+  animalInfo.tags = [];
+  animalInfo.events = [];
   await animal.set(animalInfo);
   // return animal.id;
+  console.log(animalInfo);
   return animalInfo;
 };
 
@@ -260,7 +265,7 @@ const storeTag = async (colonyId, animalId, tag) => {
   });
   return { animalId, tag };
 };
-  
+
 const storeEvent = async (colonyId, animalId, eventInfo) => {
   const colony = db.collection('colonies').doc(colonyId);
   const animal = colony.collection('animals').doc(animalId);
@@ -310,7 +315,7 @@ const getUsers = async (colonyId) => {
     })
   }
   console.log("Users: " + users);
-  return users; 
+  return users;
 }
 
 const getSharedColonies = async (list) => {
