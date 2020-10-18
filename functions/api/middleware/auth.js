@@ -12,16 +12,13 @@ const cookieParser = require('cookie-parser');
  * @param next
  * @returns {Promise<*>}
  */
-const authentication = async (req, res, next) => {
-  //console.log(req.cookies);
-  //console.log(req.headers);
-  var sessionId = cookieParser.JSONCookies(req.cookies);
+const authentication = async (req, res, next) => { //TODO this method (and user cookies in general) could use the JWT given from firebase auth instead
   const { cookies: { session } } = req;
   try {
     const { email } = jwt.verifyToken(session);
 
-    req.user = await dataService.getUser(email);
-    delete req.user.passwordHash;
+    req.user = await dataService.getUserByEmail(email);
+
     next();
   } catch (err) {
     // We'd want to create a new HTTP Error here with a 401 (Unauthenticated) status
