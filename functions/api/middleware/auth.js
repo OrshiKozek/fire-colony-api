@@ -1,5 +1,6 @@
 const jwt = require('../services/jwt');
 const dataService = require('../services/database');
+const cookieParser = require('cookie-parser');
 
 /**
  * Authentication middleware to verify the validity of a session JWT and retrieve
@@ -11,13 +12,13 @@ const dataService = require('../services/database');
  * @param next
  * @returns {Promise<*>}
  */
-const authentication = async (req, res, next) => {
+const authentication = async (req, res, next) => { //TODO this method (and user cookies in general) could use the JWT given from firebase auth instead
   const { cookies: { session } } = req;
   try {
     const { email } = jwt.verifyToken(session);
 
-    req.user = await dataService.getUser(email);
-    delete req.user.passwordHash;
+    req.user = await dataService.getUserByEmail(email);
+
     next();
   } catch (err) {
     // We'd want to create a new HTTP Error here with a 401 (Unauthenticated) status

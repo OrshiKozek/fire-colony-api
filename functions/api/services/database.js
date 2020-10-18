@@ -1,10 +1,12 @@
 const admin = require('firebase-admin');
+const { pick } = require('lodash');
 
-const serviceAccount = require('../../animal-colony-project-firebase-adminsdk-5815z-97e51a1b46.json');
+
+const serviceAccount = require('../../animal-colony-project-firebase-adminsdk-5815z-bdfc4220e8.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'http://5000/api',
+  databaseURL: 'https://animal-colony-project.firebaseio.com',
 });
 
 const db = admin.firestore();
@@ -16,8 +18,8 @@ const db = admin.firestore();
  * @returns {Promise<Object>}
  */
 const createUser = async (registrationInformation) => {
-  const { email } = registrationInformation;
-  await db.collection('users').doc(email).set(registrationInformation);
+  const { uid } = registrationInformation;
+  await db.collection('users').doc(uid).set(registrationInformation);
   return registrationInformation;
 };
 
@@ -82,14 +84,25 @@ const getTags = async () => {
 }
 
 /**
+ * Retrieves user details from the mock database based on a given uid
+ * @param uid
+ * @returns {Promise<Object>}
+ */
+const getUserByUid = async (uid) => {
+  const user = await db.collection('users').doc(uid).get();
+  return user.data();
+};
+
+/**
  * Retrieves user details from the mock database based on a given username
  * @param username
  * @returns {Promise<Object>}
  */
-const getUser = async (email) => {
-  const user = await db.collection('users').doc(email).get();
-  return user.data();
-};
+const getUserByEmail = async (email) => {
+  const qs = await db.collection('users').where('email', "==", email).limit(1).get();
+  const user = qs.docs;
+  return user[0].data();
+}
 
 /**
  * Adds a colony uuid to a users ownedColonies
@@ -97,8 +110,8 @@ const getUser = async (email) => {
  * @param username - user's username
  * @param colonyId - uuid of colony to add to profile
  */
-const addColonyToUser = async (email, colonyId) => {
-  const user = db.collection('users').doc(email);
+const addColonyToUser = async (uid, colonyId) => {
+  const user = db.collection('users').doc(uid);
   user.update({
     ownedColonies: admin.firestore.FieldValue.arrayUnion(colonyId),
   });
@@ -110,8 +123,8 @@ const addColonyToUser = async (email, colonyId) => {
  * @param username - user's username
  * @param colonyId - uuid of colony to add to profile
  */
-const addSharedColonyToUser = async (email, colonyId, accessRights) => {
-  const user = db.collection('users').doc(email);
+const addSharedColonyToUser = async (uid, colonyId, accessRights) => {
+  const user = db.collection('users').doc(uid);
   const entry = { colonyId, accessRights };
   const inversePermission = !accessRights;
   user.update({
@@ -137,7 +150,7 @@ const deleteAnimals = async (query) => {
       if (snapshot.size === 0) {
         return 0;
       }
-      
+
       var batch = db.batch();
       snapshot.docs.forEach((doc) => {
         batch.delete(doc.ref);
@@ -194,9 +207,9 @@ const editAnimal = async (colonyId, animal) => {
  *
  * @return colony.id - uuid of new colony
  */
-const addColony = async (email, colonyInfo) => {
+const addColony = async (uid, colonyInfo) => {
   const colony = db.collection('colonies').doc();
-  addColonyToUser(email, colony.id);
+  addColonyToUser(uid, colony.id);
   colonyInfo.colonyId = colony.id;
   await colony.set(colonyInfo);
   return colony.id;
@@ -217,7 +230,8 @@ const addAnimal = async (colonyId, animalInfo) => {
   const animal = colony.collection('animals').doc();
   animalInfo.animalUUID = animal.id;
   await animal.set(animalInfo);
-  return animal.id;
+  // return animal.id;
+  return animalInfo;
 };
 
 const storeImageLink = async (colonyId, animalId, url) => {
@@ -246,6 +260,24 @@ const storeTag = async (colonyId, animalId, tag) => {
   });
   return { animalId, tag };
 };
+  
+const storeEvent = async (colonyId, animalId, eventInfo) => {
+  const colony = db.collection('colonies').doc(colonyId);
+  const animal = colony.collection('animals').doc(animalId);
+  animal.update({
+    events: admin.firestore.FieldValue.arrayUnion(eventInfo),
+  });
+
+  const eventRef = db.collection('events').doc();
+  var users = await getUsers(colonyId);
+  eventRef.set({
+      event: eventInfo.event,
+      timestamp: eventInfo.timestamp,
+      users: users,
+  });
+
+  return { animalId, eventInfo };
+};
 
 const getColonies = async (list) => {
   const coloniesRef = db.collection('colonies');
@@ -260,6 +292,26 @@ const getColonies = async (list) => {
 
   return colonies;
 };
+
+const getUsers = async (colonyId) => {
+  const usersRef = db.collection('users');
+  const querySnapshot = await usersRef.get();
+  var users = [];
+  if (!querySnapshot.empty) {
+    querySnapshot.forEach(doc => {
+      const data = doc.data();
+      const numberOfKeys = Object.keys(data).length;
+      if(numberOfKeys > 0){
+        if(data.ownedColonies.indexOf(colonyId) != -1 || data.sharedColonies.indexOf(colonyId) != -1) {
+          const currUser = data.email;
+          users.push(currUser);
+        }
+      }
+    })
+  }
+  console.log("Users: " + users);
+  return users; 
+}
 
 const getSharedColonies = async (list) => {
   const coloniesRef = db.collection('colonies');
@@ -287,6 +339,73 @@ const getAnimals = async (colonyId, pageSize, pageNum) => {
   return animals;
 };
 
+const searchAnimals = async (colonyId, searchCriteria) => {
+  const { dobDay, dobMonth, dobYear, dodDay, dodMonth, dodYear, fatherId, gender, gene1, gene2, gene3, litter, motherId, mouseId } = searchCriteria;
+  const colonyRef = db.collection('colonies').doc(colonyId);
+  var animalsRef = colonyRef.collection('animals');
+
+  if (dobDay) {
+    animalsRef = animalsRef.where("dobDay", "==", dobDay);
+  }
+
+  if (dobMonth) {
+    animalsRef = animalsRef.where("dobMonth", "==", dobMonth);
+  }
+
+  if (dobYear) {
+    animalsRef = animalsRef.where("dobYear", "==", dobYear);
+  }
+
+  if (dodDay) {
+    animalsRef = animalsRef.where("dodDay", "==", dodDay);
+  }
+
+  if (dodMonth) {
+    animalsRef = animalsRef.where("dodMonth", "==", dodMonth);
+  }
+
+  if (dodYear) {
+    animalsRef = animalsRef.where("dodYear", "==", dodYear);
+  }
+
+  if (fatherId) {
+    animalsRef = animalsRef.where("fatherId", "==", fatherId);
+  }
+
+  if (gender) {
+    animalsRef = animalsRef.where("gender", "==", gender);
+  }
+
+  if (gene1) {
+    animalsRef = animalsRef.where("gene1", "==", gene1);
+  }
+
+  if (gene2) {
+    animalsRef = animalsRef.where("gene2", "==", gene2);
+  }
+
+  if (gene3) {
+    animalsRef = animalsRef.where("gene3", "==", gene3);
+  }
+
+  if (litter) {
+    animalsRef = animalsRef.where("litter", "==", litter);
+  }
+
+  if (motherId) {
+    animalsRef = animalsRef.where("motherId", "==", motherId);
+  }
+
+  if (mouseId) {
+    animalsRef = animalsRef.where("mouseId", "==", mouseId);
+  }
+
+  const snapshot = await animalsRef.get();
+  const results = snapshot.docs.map(doc => doc.data());
+  const animals = { animals: results, colonyId };
+  return animals;
+};
 
 module.exports = {
-  createUser, getUser, addColony, addAnimal, addColonyToUser, getColonies, getAnimals, addSharedColonyToUser, deleteColony, deleteAnimal, editAnimal, getSharedColonies, storeImageLink, storeNote, storeTag, addNewToTag, createNewTag, getTag, getTags };
+  createUser, getUserByUid, getUserByEmail, addColony, addAnimal, addColonyToUser, getColonies, getAnimals, addSharedColonyToUser, deleteColony, deleteAnimal, editAnimal, getSharedColonies, storeImageLink, storeNote, storeEvent, getUsers, storeTag, addNewToTag, createNewTag, getTag, getTags, searchAnimals
+};
