@@ -56,6 +56,8 @@ const createUser = async (req, res, next) => {
     console.log('then');
     const { email } = userDetails;
     const authToken = jwt.createToken({ email });
+    const origin = req.headers.origin;
+    console.log(origin);
     res
       .cookie('session', authToken)
       .status(200)

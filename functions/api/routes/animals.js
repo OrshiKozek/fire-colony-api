@@ -16,4 +16,6 @@ router.post('/storeImageLink', authentication, animalController.storeImageLink);
 
 router.post('/storeNote', authentication, animalController.storeNote);
 
+router.post('/storeEvent', authentication, animalController.storeEvent);
+
 module.exports = router;

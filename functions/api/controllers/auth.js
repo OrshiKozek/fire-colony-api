@@ -9,7 +9,6 @@ const login = async (req, res) => {
   const { body: { idToken } } = req;
   /* Verify that a user exists in the database with the given id
    */
-
    //TODO no error handling here :(
   const user = await admin.auth().verifyIdToken(idToken);
   const uid = user.uid;
