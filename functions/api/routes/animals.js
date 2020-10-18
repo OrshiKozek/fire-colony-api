@@ -6,6 +6,8 @@ const router = Router();
 
 router.post('/', authentication, animalController.getAnimals);
 
+router.post('/search', authentication, animalController.searchAnimals);
+
 router.post('/delete', authentication, animalController.deleteAnimal);
 
 router.post('/edit', authentication, animalController.editAnimal);

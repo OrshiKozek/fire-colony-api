@@ -45,6 +45,16 @@ const addAnimal = async (req, res) => {
     .catch(() => res.sendStatus(404));
 }
 
+const searchAnimals = async (req, res) => {
+  const { body: { colonyId, searchCriteria } } = req;
+
+  await dataService.searchAnimals(colonyId, searchCriteria)
+    .then((animals) => {
+      res.status(200).json(animals);
+    })
+    .catch(() => res.sendStatus(404));
+};
+
 /**
  * Parses a single line of csv data into an animal json object
  *
@@ -96,5 +106,4 @@ const storeEvent = async(req, res) => {
 
 }
 
-module.exports = { getAnimals, deleteAnimal, editAnimal, addAnimal, storeImageLink, createAnimal, storeNote, storeEvent };
-
+module.exports = { getAnimals, deleteAnimal, editAnimal, addAnimal, storeImageLink, createAnimal, storeNote, storeEvent, searchAnimals };

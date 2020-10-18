@@ -268,6 +268,73 @@ const getAnimals = async (colonyId, pageSize, pageNum) => {
   return animals;
 };
 
+const searchAnimals = async (colonyId, searchCriteria) => {
+  const { dobDay, dobMonth, dobYear, dodDay, dodMonth, dodYear, fatherId, gender, gene1, gene2, gene3, litter, motherId, mouseId } = searchCriteria;
+  const colonyRef = db.collection('colonies').doc(colonyId);
+  var animalsRef = colonyRef.collection('animals');
+
+  if (dobDay) {
+    animalsRef = animalsRef.where("dobDay", "==", dobDay);
+  }
+
+  if (dobMonth) {
+    animalsRef = animalsRef.where("dobMonth", "==", dobMonth);
+  }
+
+  if (dobYear) {
+    animalsRef = animalsRef.where("dobYear", "==", dobYear);
+  }
+
+  if (dodDay) {
+    animalsRef = animalsRef.where("dodDay", "==", dodDay);
+  }
+
+  if (dodMonth) {
+    animalsRef = animalsRef.where("dodMonth", "==", dodMonth);
+  }
+
+  if (dodYear) {
+    animalsRef = animalsRef.where("dodYear", "==", dodYear);
+  }
+
+  if (fatherId) {
+    animalsRef = animalsRef.where("fatherId", "==", fatherId);
+  }
+
+  if (gender) {
+    animalsRef = animalsRef.where("gender", "==", gender);
+  }
+
+  if (gene1) {
+    animalsRef = animalsRef.where("gene1", "==", gene1);
+  }
+
+  if (gene2) {
+    animalsRef = animalsRef.where("gene2", "==", gene2);
+  }
+
+  if (gene3) {
+    animalsRef = animalsRef.where("gene3", "==", gene3);
+  }
+
+  if (litter) {
+    animalsRef = animalsRef.where("litter", "==", litter);
+  }
+
+  if (motherId) {
+    animalsRef = animalsRef.where("motherId", "==", motherId);
+  }
+
+  if (mouseId) {
+    animalsRef = animalsRef.where("mouseId", "==", mouseId);
+  }
+
+  const snapshot = await animalsRef.get();
+  const results = snapshot.docs.map(doc => doc.data());
+  const animals = { animals: results, colonyId };
+  return animals;
+};
+
 module.exports = {
-  createUser, getUserByUid, getUserByEmail, addColony, addAnimal, addColonyToUser, getColonies, getAnimals, addSharedColonyToUser, deleteColony, deleteAnimal, editAnimal, getSharedColonies, storeImageLink, storeNote, storeEvent, getUsers
+  createUser, getUserByUid, getUserByEmail, addColony, addAnimal, addColonyToUser, getColonies, getAnimals, addSharedColonyToUser, deleteColony, deleteAnimal, editAnimal, getSharedColonies, storeImageLink, storeNote, storeEvent, getUsers, searchAnimals
 };
