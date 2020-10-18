@@ -2,6 +2,7 @@ const { Router } = require('express');
 const userRouter = require('./users');
 const colonyRouter = require('./colonies');
 const animalRouter = require('./animals');
+const tagRouter = require('./tags');
 const authController = require('../controllers/auth');
 
 const router = Router();
@@ -27,5 +28,6 @@ router.use('/user', userRouter);
 
 router.use('/colony', colonyRouter);
 router.use('/animals', animalRouter);
+router.use('/tags', tagRouter);
 
 module.exports = router;

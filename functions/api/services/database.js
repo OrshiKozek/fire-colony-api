@@ -1,6 +1,7 @@
 const admin = require('firebase-admin');
 const { pick } = require('lodash');
 
+
 const serviceAccount = require('../../animal-colony-project-firebase-adminsdk-5815z-bdfc4220e8.json');
 
 admin.initializeApp({
@@ -21,6 +22,66 @@ const createUser = async (registrationInformation) => {
   await db.collection('users').doc(uid).set(registrationInformation);
   return registrationInformation;
 };
+
+const addNewToTag = async (name, mouse) => {
+  console.log(`adding tag: name: ${name},mouse: ${mouse}`);
+  const newTag = db.collection('tags').doc(name);
+  newTag.get()
+  .then(function(doc1) {
+    if (doc1.exists) {
+      console.log("currmouse:", mouse);
+      console.log("Document data1:", doc1.data());
+      newTag.update({
+        list: admin.firestore.FieldValue.arrayUnion(mouse),
+      });
+
+      console.log("Document data2:", doc1.data());
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+      newTag.set({list: [mouse]});
+      console.log("Created such document");
+    }
+  }).catch(function(error) {
+    console.log("Error getting document:", error);
+  });
+
+  return newTag.id;
+}
+
+const createNewTag = async (name) => {
+  console.log(`adding tag: name: ${name}`);
+  const newTag = db.collection('tags').doc(name);
+  newTag.get()
+  .then(function(doc1) {
+    if (doc1.exists) {
+      console.log(`${doc1.id} already exists`);
+      
+    } else {
+      // doc.data() will be undefined in this case
+      console.log("No such document!");
+      newTag.set({list: []});
+      console.log("Created such document");
+    }
+  }).catch(function(error) {
+    console.log("Error getting document:", error);
+  });
+
+  return newTag.id;
+}
+
+const getTag = async (tagName) => {
+  const tagData = await db.collection('tags').doc(tagName).get();
+  return tagData.data();
+}
+
+const getTags = async () => {
+  const tagReference = db.collection('tags');
+  const snapshot = await tagReference.get();
+  const results = snapshot.docs.map(doc => doc.id);
+  const tagList = {tagList: results};
+  return tagList;
+}
 
 /**
  * Retrieves user details from the mock database based on a given uid
@@ -191,6 +252,15 @@ const storeNote = async (colonyId, animalId, note) => {
   return { animalId, note };
 };
 
+const storeTag = async (colonyId, animalId, tag) => {
+  const colony = db.collection('colonies').doc(colonyId);
+  const animal = colony.collection('animals').doc(animalId);
+  animal.update({
+    tags: admin.firestore.FieldValue.arrayUnion(tag),
+  });
+  return { animalId, tag };
+};
+  
 const storeEvent = async (colonyId, animalId, eventInfo) => {
   const colony = db.collection('colonies').doc(colonyId);
   const animal = colony.collection('animals').doc(animalId);
@@ -265,6 +335,7 @@ const getAnimals = async (colonyId, pageSize, pageNum) => {
   const snapshot = await animalsRef.get();
   const results = snapshot.docs.map(doc => doc.data());
   const animals = { animals: results, colonyId };
+
   return animals;
 };
 
@@ -336,5 +407,5 @@ const searchAnimals = async (colonyId, searchCriteria) => {
 };
 
 module.exports = {
-  createUser, getUserByUid, getUserByEmail, addColony, addAnimal, addColonyToUser, getColonies, getAnimals, addSharedColonyToUser, deleteColony, deleteAnimal, editAnimal, getSharedColonies, storeImageLink, storeNote, storeEvent, getUsers, searchAnimals
+  createUser, getUserByUid, getUserByEmail, addColony, addAnimal, addColonyToUser, getColonies, getAnimals, addSharedColonyToUser, deleteColony, deleteAnimal, editAnimal, getSharedColonies, storeImageLink, storeNote, storeEvent, getUsers, storeTag, addNewToTag, createNewTag, getTag, getTags, searchAnimals
 };

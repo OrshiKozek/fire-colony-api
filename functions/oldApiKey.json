@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "animal-colony-76d9b",
+  "private_key_id": "ac4894dd6b5a3b113aecd41c9c58a99714336a7d",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDgUScRmUhbPl2O\neNyoMVstQWNpJ6p08IuzSUsYlAD1EKiQQwQ/Kj/Wp3oGtD0z/2FY/PUMNTewi3cU\nLO4zzV3CJKXzyvfwveXA2gaozxtlB8GiWvHWAiDD2VyVRJBVSdHz95w0uIhzkxPl\nrUauunUbhBpgHbO3H4xoUFR+N6D7T2Er9ROr+iFnl2Fb87gFtR6w+GEj1GAmtzVM\nlBhAqA/lil2Lrbod510QlOogv+jQ9cV7VHywxC3r63ewFwAh/Bu+TTU6KGa5aw6b\nlfYKIwdcy4umPBv1j+mKrAs5FWd21ZytXJDXBljwMr4NIzy4JpEUJUmK8NhzNM1J\nYePe6dZ3AgMBAAECggEABFHLvM0E1az3xDyTkzGQHej6bxXydFoFdqhcp9aBxjZR\n6KVBua2omQuUj/h8jTnHuBz24wtLTT0CSAMtexXjTk/CWlV4PMyLVhFcu3dxgZqK\nogO6UHKuCtdurvkpBltrjZUhDurWxdL5OR0DFW5FvwfmMh+gTFBxNbkGR3/uu6gc\nbgk2LdNdqhpvmuZYIRRr72C1zcaWPzdJvCqy2wWsoyv0POIwbGWhlv+GYNj/c5TS\ndjnbZWnaYh+XTG3giHSiWuR/dnNPEWhy8Ma35Hm6O8bJ/bKn6o3HT/kUh+nl/W37\nIGASHnb7gmo4y9gdac5L8IYWBIazJa8OnVlB+//qMQKBgQDy8+JuZJyHIkIMjmt9\nk9XLywAF3OxNqYKKyIwKVyj1P3EkxEv4QziLEpfUrmSPpx25bgOdCpT6Eypn92cs\n7wtI3LV7s+O/93YVkwNYclr46GiE6+SF8wW3bhopmq4P1l5DKx5sYqlY8/rXNVz9\nP/sHG8/rGkTpDtqwNboDk47XxQKBgQDsXRCSz8ZgxLRTUJXQRFJWlyHnjWuEIGTA\niM/cESXrAnq1+MqR3LNJJE3yEySEdNgJz5WDs7mW1/KsuapbCvHgXZDBcjtq+TsW\nzqBGH8USnL/63Rn/P3UgT5vr9yqBjP+NxcCt4UZJImi/EgLZP24gUf04ldnYmD2n\nVwdaKBRdCwKBgQDeX+C3jpu/DNpLx+gXT0N3f12MAETCaQ81nI6hwFma8PDM6Gdo\n245brS8P2nftDNemLE5eZZsqsnQ0KT1k4YAAtxPeIC+sPAL3iFKdmD4wafmRAKFx\nAZoP5VVJE22SzXIGJOd56Wx8IQVOCmgM3Y0VWp2a4baFY7VDaEnUkDFEyQKBgQCi\nUS7mg0VKgwsLBBY91g1tZZBlAZtKOyy1g76q9CPEBgnbGaWTEasVmZblnPvA8rTB\n2ApnTW8wBdCjiUVSDGwalmaoUhg32DwZ53/taDfgFkFIt7n4rc1ziPgczbolCX0e\nESXGwyOPac/hFy9ZndO04lkxGMdnlPUSDBQCd++0DQKBgCMw7MKe60LHcmjmKPgl\nDeSLMzyLi1zU7xquuJS0hNOe9WefzsKxiJsUUbQOBq0Q2AE1GtbTS3q50t/W3Dc8\nAB/KgL3FIV6wt+Dc6tE+AUKfcofDjdrY5YzfXwbtzKjg13C0hucsrEVAgY/iiUPl\nBlT9taHjZWFQ36W352eLLquu\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-egbh6@animal-colony-76d9b.iam.gserviceaccount.com",
+  "client_id": "109822092542712685601",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-egbh6%40animal-colony-76d9b.iam.gserviceaccount.com"
+}
