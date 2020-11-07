@@ -407,8 +407,8 @@ const searchAnimals = async (colonyId, searchCriteria) => {
 
   const snapshot = await animalsRef.get();
   const results = snapshot.docs.map(doc => doc.data());
-  const animals = { animals: results, colonyId };
-  return animals;
+  const searchResults = { animals: results, colonyId };
+  return searchResults;
 };
 
 module.exports = {
