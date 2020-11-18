@@ -10,10 +10,10 @@ const animalController = require('../controllers/animals');
  * @param next
  */
 const createColony = async (req, res, next) => {
-  const { user: { uid }, body: { payload, name } } = req;
+  const { user: { uid }, body: { payload, name, geneNames } } = req;
 
   /* Create initial colony meta data and add to db */
-  const colonyMeta = { colonyName: name, size: 0 };
+  const colonyMeta = { colonyName: name, size: 0, geneNames };
   const colonyId = await dataService.addColony(uid, colonyMeta);
 
   /* Parse the csv payload */

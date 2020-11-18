@@ -49,8 +49,8 @@ const searchAnimals = async (req, res) => {
   const { body: { colonyId, searchCriteria } } = req;
 
   await dataService.searchAnimals(colonyId, searchCriteria)
-    .then((animals) => {
-      res.status(200).json(animals);
+    .then((searchResults) => {
+      res.status(200).json(searchResults);
     })
     .catch(() => res.sendStatus(404));
 };
@@ -66,7 +66,7 @@ const searchAnimals = async (req, res) => {
 const createAnimal = async (headers, line) => {
   const animal = {};
   const lineSplit = line.split(',');
-//Might have to update headers length if we're going to be 
+//Might have to update headers length if we're going to be
 //using csv files that already include tags...
 //or are tags going to be an interface feature only
 //idk if we're trying to go csv free...
