@@ -49,8 +49,8 @@ const searchAnimals = async (req, res) => {
   const { body: { colonyId, searchCriteria } } = req;
 
   await dataService.searchAnimals(colonyId, searchCriteria)
-    .then((animals) => {
-      res.status(200).json(animals);
+    .then((searchResults) => {
+      res.status(200).json(searchResults);
     })
     .catch((err) => console.log(err));
 };
@@ -66,7 +66,7 @@ const searchAnimals = async (req, res) => {
 const createAnimal = async (headers, line) => {
   const animal = {};
   const lineSplit = line.split(',');
-//Might have to update headers length if we're going to be 
+//Might have to update headers length if we're going to be
 //using csv files that already include tags...
 //or are tags going to be an interface feature only
 //idk if we're trying to go csv free...
@@ -82,12 +82,16 @@ const createAnimal = async (headers, line) => {
 };
 
 const storeImageLink = async (req, res) => {
-  const { body: { colonyId, animalId, url } } = req;
-  await dataService.storeImageLink(colonyId, animalId, url)
+  const { body: { colonyId, animalId, url, timestamp, date, note } } = req;
+  await dataService.storeImageLink(colonyId, animalId, url, timestamp, date, note)
     .then((link) => {
+      // console.log("link in controllers/animals", link);
       res.status(200).json(link);
     })
-    .catch(() => res.sendStatus(500));
+    .catch((error) => { 
+      console.log("error:", error);
+      res.sendStatus(500)}
+      );
 }
 
 const storeNote = async (req, res) => {
