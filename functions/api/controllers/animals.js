@@ -82,12 +82,16 @@ const createAnimal = async (headers, line) => {
 };
 
 const storeImageLink = async (req, res) => {
-  const { body: { colonyId, animalId, url } } = req;
-  await dataService.storeImageLink(colonyId, animalId, url)
+  const { body: { colonyId, animalId, url, timestamp, date, note } } = req;
+  await dataService.storeImageLink(colonyId, animalId, url, timestamp, date, note)
     .then((link) => {
+      // console.log("link in controllers/animals", link);
       res.status(200).json(link);
     })
-    .catch(() => res.sendStatus(500));
+    .catch((error) => { 
+      console.log("error:", error);
+      res.sendStatus(500)}
+      );
 }
 
 const storeNote = async (req, res) => {

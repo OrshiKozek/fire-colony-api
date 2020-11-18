@@ -239,13 +239,21 @@ const addAnimal = async (colonyId, animalInfo) => {
   return animalInfo;
 };
 
-const storeImageLink = async (colonyId, animalId, url) => {
+const storeImageLink = async (colonyId, animalId, url, timestamp, date, note) => {
   const colony = db.collection('colonies').doc(colonyId);
   const animal = colony.collection('animals').doc(animalId);
+
+  var imageArray = {};
+  imageArray.date = date;
+  imageArray.note = note;
+  imageArray.timestamp = timestamp;
+  imageArray.url = url;
+
   animal.update({
-    imageLinks: admin.firestore.FieldValue.arrayUnion(url),
+    imageLinks: admin.firestore.FieldValue.arrayUnion(imageArray),
   });
-  return { animalId, url };
+
+  return { animalId, imageArray };
 };
 
 const storeNote = async (colonyId, animalId, note) => {
