@@ -3,7 +3,6 @@ const dataService = require('../services/database');
 
 const addToTag = async (req, res) => {
   const { body: { tagName, mouse } } = req;
-  console.log(`in controller, tagname=${tagName}`);
 
   await dataService.addNewToTag(tagName, mouse);
   
@@ -13,7 +12,6 @@ const addToTag = async (req, res) => {
 
 const createTag = async (req, res) => {
   const { body: { tagName } } = req;
-  console.log(`in controller, tagname=${tagName}`);
 
   await dataService.createNewTag(tagName);
   
@@ -33,7 +31,7 @@ const getOneTag = async (req, res) => {
 
 const getAllTags = async (req, res) => {
   await dataService.getTags()
-  // await dataService.collection('tags')
+
     .then((docs) => {
       res.status(200).json(docs);
     })
