@@ -29,13 +29,16 @@ const addNewToTag = async (name, mouse) => {
   newTag.get()
   .then(function(doc1) {
     if (doc1.exists) {
-      console.log("currmouse:", mouse);
-      console.log("Document data1:", doc1.data());
-      newTag.update({
-        list: admin.firestore.FieldValue.arrayUnion(mouse),
+      // console.log("currmouse:", mouse);
+      // console.log("Document data1:", doc1.data());
+      mouse.forEach(m => {
+        console.log(m);
+        newTag.update({
+          list: admin.firestore.FieldValue.arrayUnion(m),
+        });
       });
 
-      console.log("Document data2:", doc1.data());
+      // console.log("Document data2:", doc1.data());
     } else {
       // doc.data() will be undefined in this case
       console.log("No such document!");
@@ -345,8 +348,10 @@ const getAnimals = async (colonyId, pageSize, pageNum) => {
 };
 
 const searchAnimals = async (colonyId, searchCriteria) => {
-  const { dobDay, dobMonth, dobYear, dodDay, dodMonth, dodYear, fatherId, gender, gene1, gene2, gene3, litter, motherId, mouseId } = searchCriteria;
-  const colonyRef = db.collection('colonies').doc(colonyId);
+  console.log(searchCriteria);
+  var { dobDay, dobMonth, dobYear, dodDay, dodMonth, dodYear, fatherId, gender, gene1, gene2, gene3, litter, motherId, mouseId } = searchCriteria.animalInfo;
+   
+  var colonyRef = db.collection('colonies').doc(colonyId);
   var animalsRef = colonyRef.collection('animals');
 
   if (dobDay) {
@@ -407,8 +412,8 @@ const searchAnimals = async (colonyId, searchCriteria) => {
 
   const snapshot = await animalsRef.get();
   const results = snapshot.docs.map(doc => doc.data());
-  const animals = { animals: results, colonyId };
-  return animals;
+  console.log(results);
+  return results;
 };
 
 module.exports = {

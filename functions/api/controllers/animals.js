@@ -52,7 +52,7 @@ const searchAnimals = async (req, res) => {
     .then((animals) => {
       res.status(200).json(animals);
     })
-    .catch(() => res.sendStatus(404));
+    .catch((err) => console.log(err));
 };
 
 /**
