@@ -415,7 +415,6 @@ const searchAnimals = async (colonyId, searchCriteria) => {
 
   const snapshot = await animalsRef.get();
   const results = snapshot.docs.map(doc => doc.data());
-  
 };
 
 module.exports = {
