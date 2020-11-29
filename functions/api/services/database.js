@@ -1,6 +1,6 @@
 const admin = require('firebase-admin');
+var FlexSearch = require("flexsearch");
 const { pick } = require('lodash');
-
 
 const serviceAccount = require('../../animal-colony-project-firebase-adminsdk-5815z-bdfc4220e8.json');
 
@@ -355,12 +355,12 @@ const getAnimals = async (colonyId, pageSize, pageNum) => {
   return animals;
 };
 
-const searchAnimals = async (colonyId, searchCriteria) => {
-  console.log(searchCriteria);
-  var { dobDay, dobMonth, dobYear, dodDay, dodMonth, dodYear, fatherId, gender, gene1, gene2, gene3, litter, motherId, mouseId } = searchCriteria.animalInfo;
-   
+const searchAnimals = async (colonyId, searchCriteria, tags) => {
+  var { dobDay, dobMonth, dobYear, dodDay, dodMonth, dodYear, fatherId, gender, gene1, gene2, gene3, litter, motherId, mouseId, text } = searchCriteria.animalInfo; 
   var colonyRef = db.collection('colonies').doc(colonyId);
   var animalsRef = colonyRef.collection('animals');
+  var tagList = tags;
+  console.log(searchCriteria);
 
   if (dobDay) {
     animalsRef = animalsRef.where("dobDay", "==", dobDay);
@@ -419,8 +419,43 @@ const searchAnimals = async (colonyId, searchCriteria) => {
   }
 
   const snapshot = await animalsRef.get();
-  const results = snapshot.docs.map(doc => doc.data());
-  console.log(results);
+  var results = snapshot.docs.map(doc => doc.data())
+
+  if(tagList.length > 0) {
+    for(tag of tagList) {
+      var filtered = results.filter(function(value, index, arr){ 
+        return value.tags.includes(tag);
+      });
+      results = filtered;
+    }
+  }
+
+  if (text) { 
+    var index = new FlexSearch("memory", {
+      encode: "balance",
+      tokenize: "forward",
+      async: "true",
+      threshold: 0
+    });
+    for(animal of results) {
+      var fullSearchText = "";
+      for(event of animal.events) {
+        fullSearchText = fullSearchText + " " + event.event;
+      }
+      for(note of animal.notes) {
+        fullSearchText = fullSearchText + " " + note.notes;
+      }
+      if(fullSearchText) {
+        index.add(animal.mouseId, fullSearchText);
+      }
+    }    
+    var ids = await index.search(text);
+    var filtered = results.filter(function(value, index, arr){ 
+        return ids.includes(value.mouseId);
+    });
+    results = filtered;
+  }
+
   return results;
 };
 

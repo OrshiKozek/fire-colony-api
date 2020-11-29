@@ -25,8 +25,11 @@
     "firebase-admin": "^9.2.0",
     "firebase-elasticsearch-indexer": "^1.0.2",
     "firebase-functions": "^3.10.0",
+    "flexsearch": "^0.6.32",
+    "lang.js": "^1.0.0",
     "node-cron": "^2.0.3",
-    "nodemailer": "^6.4.14"
+    "nodemailer": "^6.4.14",
+    "react-use-flexsearch": "^0.1.1"
   },
   "devDependencies": {
     "google-pubsub-emulator": "^4.0.0"
