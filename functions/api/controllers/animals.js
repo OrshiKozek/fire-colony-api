@@ -82,16 +82,35 @@ const createAnimal = async (headers, line) => {
 };
 
 const storeImageLink = async (req, res) => {
-  const { body: { colonyId, animalId, url, timestamp, date, note } } = req;
-  await dataService.storeImageLink(colonyId, animalId, url, timestamp, date, note)
+  const { body: { colonyId, animalId, url, timestamp, date, note, name } } = req;
+  console.log("calling db storeimagelink");
+
+  console.log("req body:", req.body);
+  
+  await dataService.storeImageLink(colonyId, animalId, url, timestamp, date, note, name)
     .then((link) => {
-      // console.log("link in controllers/animals", link);
+      console.log("link in controllers/animals", link);
       res.status(200).json(link);
     })
     .catch((error) => { 
       console.log("error:", error);
       res.sendStatus(500)}
       );
+}
+
+const deleteImageLink = async (req, res) => {
+  const { body: { colonyId, animalId, imageObject } } = req;
+
+  console.log("req in delImLnk", req.body);
+  await dataService.deleteImageLink(colonyId, animalId, imageObject)
+  .then((result) => {
+    console.log("delete: link in controllers/animals", result);
+    res.status(200).json(result);
+  })
+  .catch((error) => { 
+    console.log("error:", error);
+    res.sendStatus(500)}
+    );
 }
 
 const storeNote = async (req, res) => {
@@ -122,4 +141,4 @@ const storeEvent = async(req, res) => {
 
 }
 
-module.exports = { getAnimals, deleteAnimal, editAnimal, addAnimal, storeImageLink, createAnimal, storeNote, storeTags, storeEvent, searchAnimals };
+module.exports = { getAnimals, deleteAnimal, editAnimal, addAnimal, storeImageLink, deleteImageLink, createAnimal, storeNote, storeTags, storeEvent, searchAnimals };

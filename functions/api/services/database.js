@@ -10,6 +10,9 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
+// const storage = admin.storage();
+// admin.storage().app()
+
 
 /**
  * Sends a user's registration information to the mock database and returns
@@ -242,22 +245,54 @@ const addAnimal = async (colonyId, animalInfo) => {
   return animalInfo;
 };
 
-const storeImageLink = async (colonyId, animalId, url, timestamp, date, note) => {
+const storeImageLink = async (colonyId, animalId, url, timestamp, date, note, name) => {
   const colony = db.collection('colonies').doc(colonyId);
   const animal = colony.collection('animals').doc(animalId);
 
   var imageArray = {};
   imageArray.date = date;
+  imageArray.name = name;
   imageArray.note = note;
   imageArray.timestamp = timestamp;
   imageArray.url = url;
 
+  console.log("image array", imageArray);
+
+  console.log("updates animal in db");
   animal.update({
     imageLinks: admin.firestore.FieldValue.arrayUnion(imageArray),
   });
 
+  console.log("returning animalid and imagearray");
   return { animalId, imageArray };
 };
+
+const deleteImageLink = async (colonyId, animalId, imageObject) => {
+  const colony = db.collection('colonies').doc(colonyId);
+  const animal = colony.collection('animals').doc(animalId);
+
+  // var storageRef = storage.ref();
+  // var imagePath = `images/${colonyId}/${animalId}/${imageObject.date}/${imageObject.name}`;
+  // var imageRef = storageRef.child(imagePath);
+
+  console.log("image obj in db", imageObject);
+
+  animal.update({
+    imageLinks: admin.firestore.FieldValue.arrayRemove(imageObject),
+  });
+
+  //   // Delete the file
+  // imageRef.delete().then(function() {
+  //   // File deleted successfully
+  //   console.log(`${imagePath} deleted`);
+  // }).catch(function(error) {
+  //   console.log("error: ", error);
+  //   // Uh-oh, an error occurred!
+  // });
+
+  console.log("deleted selected image link: ", imageObject);
+  // return { animalId, imageObject}
+}
 
 const storeNote = async (colonyId, animalId, note) => {
   const colony = db.collection('colonies').doc(colonyId);
@@ -425,5 +460,5 @@ const searchAnimals = async (colonyId, searchCriteria) => {
 };
 
 module.exports = {
-  createUser, getUserByUid, getUserByEmail, addColony, addAnimal, addColonyToUser, getColonies, getAnimals, addSharedColonyToUser, deleteColony, deleteAnimal, editAnimal, getSharedColonies, storeImageLink, storeNote, storeEvent, getUsers, storeTag, addNewToTag, createNewTag, getTag, getTags, searchAnimals
+  createUser, getUserByUid, getUserByEmail, addColony, addAnimal, addColonyToUser, getColonies, getAnimals, addSharedColonyToUser, deleteColony, deleteAnimal, editAnimal, getSharedColonies, storeImageLink, deleteImageLink, storeNote, storeEvent, getUsers, storeTag, addNewToTag, createNewTag, getTag, getTags, searchAnimals
 };
