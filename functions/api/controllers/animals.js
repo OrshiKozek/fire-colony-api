@@ -9,8 +9,11 @@ const dataService = require('../services/database');
 const getAnimals = async (req, res) => {
   const { body: { colonyId, rowsPerPage, page } } = req;
 
+  console.log(colonyId);
+
   await dataService.getAnimals(colonyId, rowsPerPage, page)
     .then((animals) => {
+      console.log(animals);
       res.status(200).json(animals);
     })
     .catch(() => res.sendStatus(404));
@@ -27,9 +30,10 @@ const deleteAnimal = async (req, res) => {
 
 const editAnimal = async (req, res) => {
   const { body: { animal, colonyId } } = req;
-  console.log(req.body);
+  // console.log(req.body);
   await dataService.editAnimal(colonyId, animal)
     .then((result) => {
+      console.log(result);
       res.status(200).json(result);
     })
     .catch(() => res.sendStatus(404));
@@ -88,7 +92,7 @@ const storeImageLink = async (req, res) => {
       // console.log("link in controllers/animals", link);
       res.status(200).json(link);
     })
-    .catch((error) => { 
+    .catch((error) => {
       console.log("error:", error);
       res.sendStatus(500)}
       );

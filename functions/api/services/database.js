@@ -238,7 +238,7 @@ const addAnimal = async (colonyId, animalInfo) => {
   animalInfo.events = [];
   await animal.set(animalInfo);
   // return animal.id;
-  console.log(animalInfo);
+  // console.log(animalInfo);
   return animalInfo;
 };
 
@@ -345,11 +345,16 @@ const getSharedColonies = async (list) => {
 };
 
 const getAnimals = async (colonyId, pageSize, pageNum) => {
+  console.log(colonyId);
+
   const colonyRef = db.collection('colonies').doc(colonyId);
   const animalsRef = colonyRef.collection('animals').limit(pageSize).offset(pageSize * pageNum);
 
   const snapshot = await animalsRef.get();
   const results = snapshot.docs.map(doc => doc.data());
+
+  console.log(results);
+
   const animals = { animals: results, colonyId };
 
   return animals;
