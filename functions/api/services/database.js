@@ -396,7 +396,7 @@ const getAnimals = async (colonyId, pageSize, pageNum) => {
 };
 
 const searchAnimals = async (colonyId, searchCriteria, tags) => {
-  var { dobDay, dobMonth, dobYear, dodDay, dodMonth, dodYear, fatherId, gender, gene1, gene2, gene3, litter, motherId, mouseId, text } = searchCriteria.animalInfo; 
+  var { dobDay, dobMonth, dobYear, dodDay, dodMonth, dodYear, fatherId, gender, gene1, gene2, gene3, litter, motherId, mouseId, text } = searchCriteria;
   var colonyRef = db.collection('colonies').doc(colonyId);
   var animalsRef = colonyRef.collection('animals');
   var tagList = tags;
@@ -463,14 +463,14 @@ const searchAnimals = async (colonyId, searchCriteria, tags) => {
 
   if(tagList.length > 0) {
     for(tag of tagList) {
-      var filtered = results.filter(function(value, index, arr){ 
+      var filtered = results.filter(function(value, index, arr){
         return value.tags.includes(tag);
       });
       results = filtered;
     }
   }
 
-  if (text) { 
+  if (text) {
     var index = new FlexSearch("memory", {
       encode: "balance",
       tokenize: "forward",
@@ -488,9 +488,9 @@ const searchAnimals = async (colonyId, searchCriteria, tags) => {
       if(fullSearchText) {
         index.add(animal.mouseId, fullSearchText);
       }
-    }    
+    }
     var ids = await index.search(text);
-    var filtered = results.filter(function(value, index, arr){ 
+    var filtered = results.filter(function(value, index, arr){
         return ids.includes(value.mouseId);
     });
     results = filtered;
