@@ -50,9 +50,9 @@ const addAnimal = async (req, res) => {
 }
 
 const searchAnimals = async (req, res) => {
-  const { body: { colonyId, searchCriteria } } = req;
+  const { body: { colonyId, searchCriteria, tags } } = req;
 
-  await dataService.searchAnimals(colonyId, searchCriteria)
+  await dataService.searchAnimals(colonyId, searchCriteria, tags)
     .then((searchResults) => {
       res.status(200).json(searchResults);
     })
