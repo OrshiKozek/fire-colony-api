@@ -16,6 +16,8 @@ router.post('/add', authentication, animalController.addAnimal);
 
 router.post('/storeImageLink', authentication, animalController.storeImageLink);
 
+router.post('/deleteImageLink', authentication, animalController.deleteImageLink);
+
 router.post('/storeNote', authentication, animalController.storeNote);
 
 router.post('/storeTags', authentication, animalController.storeTags);
