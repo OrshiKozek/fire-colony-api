@@ -10,9 +10,6 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
-// const storage = admin.storage();
-// admin.storage().app()
-
 
 /**
  * Sends a user's registration information to the mock database and returns
@@ -27,26 +24,18 @@ const createUser = async (registrationInformation) => {
 };
 
 const addNewToTag = async (name, mouse) => {
-  console.log(`adding tag: name: ${name},mouse: ${mouse}`);
   const newTag = db.collection('tags').doc(name);
   newTag.get()
   .then(function(doc1) {
     if (doc1.exists) {
-      // console.log("currmouse:", mouse);
-      // console.log("Document data1:", doc1.data());
       mouse.forEach(m => {
-        console.log(m);
         newTag.update({
           list: admin.firestore.FieldValue.arrayUnion(m),
         });
       });
-
-      // console.log("Document data2:", doc1.data());
     } else {
       // doc.data() will be undefined in this case
-      console.log("No such document!");
       newTag.set({list: [mouse]});
-      console.log("Created such document");
     }
   }).catch(function(error) {
     console.log("Error getting document:", error);
@@ -56,18 +45,14 @@ const addNewToTag = async (name, mouse) => {
 }
 
 const createNewTag = async (name) => {
-  console.log(`adding tag: name: ${name}`);
   const newTag = db.collection('tags').doc(name);
   newTag.get()
   .then(function(doc1) {
     if (doc1.exists) {
       console.log(`${doc1.id} already exists`);
-
     } else {
       // doc.data() will be undefined in this case
-      console.log("No such document!");
       newTag.set({list: []});
-      console.log("Created such document");
     }
   }).catch(function(error) {
     console.log("Error getting document:", error);
@@ -171,7 +156,8 @@ const deleteAnimals = async (query) => {
         deleteAnimals(query);
       });
     })
-    .catch(() => {
+    .catch((err) => {
+      console.log(err);
     });
 }
 
@@ -240,8 +226,6 @@ const addAnimal = async (colonyId, animalInfo) => {
   animalInfo.tags = [];
   animalInfo.events = [];
   await animal.set(animalInfo);
-  // return animal.id;
-  // console.log(animalInfo);
   return animalInfo;
 };
 
@@ -256,14 +240,10 @@ const storeImageLink = async (colonyId, animalId, url, timestamp, date, note, na
   imageArray.timestamp = timestamp;
   imageArray.url = url;
 
-  console.log("image array", imageArray);
-
-  console.log("updates animal in db");
   animal.update({
     imageLinks: admin.firestore.FieldValue.arrayUnion(imageArray),
   });
 
-  console.log("returning animalid and imagearray");
   return { animalId, imageArray };
 };
 
@@ -271,27 +251,9 @@ const deleteImageLink = async (colonyId, animalId, imageObject) => {
   const colony = db.collection('colonies').doc(colonyId);
   const animal = colony.collection('animals').doc(animalId);
 
-  // var storageRef = storage.ref();
-  // var imagePath = `images/${colonyId}/${animalId}/${imageObject.date}/${imageObject.name}`;
-  // var imageRef = storageRef.child(imagePath);
-
-  console.log("image obj in db", imageObject);
-
   animal.update({
     imageLinks: admin.firestore.FieldValue.arrayRemove(imageObject),
   });
-
-  //   // Delete the file
-  // imageRef.delete().then(function() {
-  //   // File deleted successfully
-  //   console.log(`${imagePath} deleted`);
-  // }).catch(function(error) {
-  //   console.log("error: ", error);
-  //   // Uh-oh, an error occurred!
-  // });
-
-  console.log("deleted selected image link: ", imageObject);
-  // return { animalId, imageObject}
 }
 
 const storeNote = async (colonyId, animalId, note) => {
@@ -360,7 +322,6 @@ const getUsers = async (colonyId) => {
       }
     })
   }
-  console.log("Users: " + users);
   return users;
 }
 
@@ -380,15 +341,12 @@ const getSharedColonies = async (list) => {
 };
 
 const getAnimals = async (colonyId, pageSize, pageNum) => {
-  console.log(colonyId);
 
   const colonyRef = db.collection('colonies').doc(colonyId);
   const animalsRef = colonyRef.collection('animals').limit(pageSize).offset(pageSize * pageNum);
 
   const snapshot = await animalsRef.get();
   const results = snapshot.docs.map(doc => doc.data());
-
-  console.log(results);
 
   const animals = { animals: results, colonyId };
 
@@ -400,7 +358,6 @@ const searchAnimals = async (colonyId, searchCriteria, tags) => {
   var colonyRef = db.collection('colonies').doc(colonyId);
   var animalsRef = colonyRef.collection('animals');
   var tagList = tags;
-  console.log(searchCriteria);
 
   if (dobDay) {
     animalsRef = animalsRef.where("dobDay", "==", dobDay);
