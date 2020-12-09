@@ -2,14 +2,9 @@ const admin = require('firebase-admin');
 var FlexSearch = require("flexsearch");
 const { pick } = require('lodash');
 
-const serviceAccount = require('../../animal-colony-project-firebase-adminsdk-5815z-bdfc4220e8.json');
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://animal-colony-project.firebaseio.com',
-});
-
-const db = admin.firestore();
+/*
+  PASTE FIREBASE CONSOLE CODE HERE. BE SURE TO REPLACE THE PROVIDED PATH WITH THE PATH TO YOUR SERVICE ACCOUNT KEY.
+*/
 
 /**
  * Sends a user's registration information to the mock database and returns
