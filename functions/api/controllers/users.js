@@ -31,8 +31,14 @@ const createUser = async (req, res, next) => {
     },
   } = req;
 
-  //TODO no error handling here :(
-  const user = await admin.auth().verifyIdToken(idToken);
+  const user = await admin.auth().verifyIdToken(idToken)
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((error) => {
+      res.sendStatus(404);
+      console.log(error)}
+    );
   const uid = user.uid;
 
   if (!firstName || !lastName) {
@@ -52,7 +58,8 @@ const createUser = async (req, res, next) => {
     email,
     ownedColonies,
     sharedColonies,
-  }).then((userDetails) => {
+  })
+  .then((userDetails) => {
     console.log('then');
     const { email } = userDetails;
     const authToken = jwt.createToken({ email });
@@ -62,7 +69,8 @@ const createUser = async (req, res, next) => {
       .cookie('session', authToken)
       .status(200)
       .json(userDetails);
-  }).catch((err) => {
+  })
+  .catch((err) => {
     next(Error(`Unable to register user at this time: ${err.toString()}`));
   });
 };

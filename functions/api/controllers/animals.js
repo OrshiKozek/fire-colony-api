@@ -9,14 +9,14 @@ const dataService = require('../services/database');
 const getAnimals = async (req, res) => {
   const { body: { colonyId, rowsPerPage, page } } = req;
 
-  console.log(colonyId);
-
   await dataService.getAnimals(colonyId, rowsPerPage, page)
     .then((animals) => {
-      console.log(animals);
       res.status(200).json(animals);
     })
-    .catch(() => res.sendStatus(404));
+    .catch((error) => {
+      res.sendStatus(404);
+      console.log(error)}
+      );
 };
 
 const deleteAnimal = async (req, res) => {
@@ -25,28 +25,36 @@ const deleteAnimal = async (req, res) => {
     .then((result) => {
       res.status(200).json(result);
     })
-    .catch(() => res.sendStatus(404));
+    .catch((error) => {
+      res.sendStatus(404);
+      console.log(error)}
+      );
 }
 
 const editAnimal = async (req, res) => {
   const { body: { animal, colonyId } } = req;
-  // console.log(req.body);
+
   await dataService.editAnimal(colonyId, animal)
     .then((result) => {
-      console.log(result);
       res.status(200).json(result);
     })
-    .catch(() => res.sendStatus(404));
+    .catch((error) => {
+      res.sendStatus(404);
+      console.log(error)}
+      );
 }
 
 const addAnimal = async (req, res) => {
   const { body: { animal, colonyId } } = req;
-  console.log(req.body);
+
   await dataService.addAnimal(colonyId, animal)
     .then((result) => {
       res.status(200).json(result);
     })
-    .catch(() => res.sendStatus(404));
+    .catch((error) => {
+      res.sendStatus(404);
+      console.log(error)}
+      );
 }
 
 const searchAnimals = async (req, res) => {
@@ -56,7 +64,10 @@ const searchAnimals = async (req, res) => {
     .then((searchResults) => {
       res.status(200).json(searchResults);
     })
-    .catch((err) => console.log(err));
+    .catch((error) => {
+      res.sendStatus(404);
+      console.log(error)}
+      );
 };
 
 /**
@@ -87,33 +98,27 @@ const createAnimal = async (headers, line) => {
 
 const storeImageLink = async (req, res) => {
   const { body: { colonyId, animalId, url, timestamp, date, note, name } } = req;
-  console.log("calling db storeimagelink");
-
-  console.log("req body:", req.body);
   
   await dataService.storeImageLink(colonyId, animalId, url, timestamp, date, note, name)
     .then((link) => {
-      console.log("link in controllers/animals", link);
       res.status(200).json(link);
     })
     .catch((error) => {
-      console.log("error:", error);
-      res.sendStatus(500)}
-      );
+      res.sendStatus(404);
+      console.log(error)}
+    );
 }
 
 const deleteImageLink = async (req, res) => {
   const { body: { colonyId, animalId, imageObject } } = req;
 
-  console.log("req in delImLnk", req.body);
   await dataService.deleteImageLink(colonyId, animalId, imageObject)
   .then((result) => {
-    console.log("delete: link in controllers/animals", result);
     res.status(200).json(result);
   })
-  .catch((error) => { 
-    console.log("error:", error);
-    res.sendStatus(500)}
+  .catch((error) => {
+    res.sendStatus(404);
+    console.log(error)}
     );
 }
 
@@ -123,7 +128,10 @@ const storeNote = async (req, res) => {
     .then((note) => {
       res.status(200).json(note);
     })
-    .catch(() => res.sendStatus(500));
+    .catch((error) => {
+      res.sendStatus(404);
+      console.log(error)}
+      );
 }
 
 const storeTags = async (req, res) => {
@@ -132,7 +140,10 @@ const storeTags = async (req, res) => {
     .then((tag) => {
       res.status(200).json(tag);
     })
-    .catch(() => res.sendStatus(500));
+    .catch((error) => {
+      res.sendStatus(404);
+      console.log(error)}
+      );
 }
 
 const storeEvent = async(req, res) => {
@@ -141,7 +152,10 @@ const storeEvent = async(req, res) => {
     .then((event) => {
       res.status(200).json(event);
     })
-    .catch(() => res.sendStatus(500));
+    .catch((error) => {
+      res.sendStatus(404);
+      console.log(error)}
+      );
 
 }
 

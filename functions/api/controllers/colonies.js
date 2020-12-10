@@ -41,7 +41,14 @@ const checkForErrors = async (colonyId, animalCount) => {
 
   const numRegex = RegExp('^\\d*$');
 
-  const {animals} = await dataService.getAnimals(colonyId, animalCount, 0);
+  const {animals} = await dataService.getAnimals(colonyId, animalCount, 0)
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((error) => {
+      res.sendStatus(404);
+      console.log(error)}
+    );
 
   let animalTable = {};
   for (var index = 0; index < animals.length; ++index) {
@@ -138,7 +145,14 @@ const createColony = async (req, res, next) => {
 
   /* Create initial colony meta data and add to db */
   const colonyMeta = { colonyName: name, size: 0, geneNames };
-  const colonyId = await dataService.addColony(uid, colonyMeta);
+  const colonyId = await dataService.addColony(uid, colonyMeta)
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((error) => {
+      res.sendStatus(404);
+      console.log(error)}
+    );
 
   /* Parse the csv payload */
   const lines = payload.split('\r\n');
@@ -158,9 +172,23 @@ const createColony = async (req, res, next) => {
     }
   }
 
-  await Promise.all(animalPromises);
+  await Promise.all(animalPromises)
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((error) => {
+      res.sendStatus(404);
+      console.log(error)}
+    );
 
-  const fileErrorsFound = await checkForErrors(colonyId, animalCount);
+  const fileErrorsFound = await checkForErrors(colonyId, animalCount)
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((error) => {
+      res.sendStatus(404);
+      console.log(error)}
+    );
 
   colonyMeta.colonyId = colonyId;
   colonyMeta.size = animalCount;
@@ -176,19 +204,32 @@ const deleteColony = async (req, res) => {
     .then((result) => {
       res.status(200).json(result);
     })
-    .catch(() => res.sendStatus(404));
-};
+    .catch((error) => {
+    res.sendStatus(404);
+    console.log(error)}
+    );
+  };
 
 const shareColony = async (req, res) => {
   const { body: { email, colonyId, accessRights } } = req;
 
-  const userData = await dataService.getUserByEmail(email);
+  const userData = await dataService.getUserByEmail(email)
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((error) => {
+      res.sendStatus(404);
+      console.log(error)}
+    );
 
   await dataService.addSharedColonyToUser(userData.uid, colonyId, accessRights)
     .then((uuid) => {
       res.status(200).json(uuid);
     })
-    .catch(() => res.sendStatus(404));
+    .catch((error) => {
+      res.sendStatus(404);
+      console.log(error)}
+      );
 };
 
 module.exports = { createColony, shareColony, deleteColony };
