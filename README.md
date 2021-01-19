@@ -1,6 +1,6 @@
 # Animal Colony Management System Front End
 
-## [Frontend code](https://github.com/dielhennr/colony-frontend)
+## [Frontend code](https://github.com/OrshiKozek/colony-frontend)
 
 ## Development Setup
 You'll first need [Node.js](https://nodejs.org/) installed, however I recommend
@@ -63,3 +63,7 @@ to deploy the REST endpoints.
 firebase deploy
 ```
 
+### Previous Version, Spring 2021
+[Old Frontend Code](https://github.com/dielhennr/colony-frontend)
+
+[Old Backend Code](https://github.com/dielhennr/fire-colony-api)
